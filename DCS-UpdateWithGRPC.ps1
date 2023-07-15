@@ -1,7 +1,8 @@
 param(
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Low')]
     [Parameter(Position = 0)]
-    [string] $InstallPath
+    [string] $InstallPath,
+    [switch] $NoUpdate
 )
 
 Write-Output "Welcome to Sendit's DCS Updater script with GRPC support!"
@@ -22,11 +23,16 @@ if ($InstallPath -eq "") {
 # Start the updater! The script will wait for it to complete before proceeding.
 $updaterPath = Join-Path -Path $InstallPath -ChildPath "bin\DCS_updater.exe";
 
-Write-Output "Starting Updater...";
-Start-Process $updaterPath -ArgumentList @("update");
-Write-Output "Waiting for Updater to exit...";
-Get-Process | Where-Object ProcessName -Like "DCS*Updater*" | Wait-Process;
-Write-Output "Done!`n`nUpdating MissionScripting.lua with GRPC functions...";
+if ($NoUpdate.IsPresent) {
+    Write-Output "NoUpdate flag present, skipping DCS updater."
+}
+else {
+    Write-Output "Starting Updater...";
+    Start-Process $updaterPath -ArgumentList @("update");
+    Write-Output "Waiting for Updater to exit...";
+    Get-Process | Where-Object ProcessName -Like "DCS*Updater*" | Wait-Process;
+    Write-Output "Done!`n`nUpdating MissionScripting.lua with GRPC functions...";
+}
 
 # Locate the MissionScripting.lua file, then read its contents into a variable that we can manipulate.
 $scriptPath = Join-Path -Path $InstallPath -ChildPath "Scripts\MissionScripting.lua";
@@ -85,7 +91,8 @@ if ($changed) {
 
     # Verify that the user wants to proceed with the changes
     if ($PSCmdlet.ShouldProcess("$scriptPath", "Write the modified script to file?")) {
-        $content | Out-File -FilePath $scriptPath
+        $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False;
+        [System.IO.File]::WriteAllLines($scriptPath, $content, $Utf8NoBomEncoding);
     }
 }
 else {
