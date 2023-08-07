@@ -27,10 +27,8 @@ if ($NoUpdate.IsPresent) {
     Write-Output "NoUpdate flag present, skipping DCS updater."
 }
 else {
-    Write-Output "Starting Updater...";
-    Start-Process $updaterPath -ArgumentList @("update");
-    Write-Output "Waiting for Updater to exit...";
-    Get-Process | Where-Object ProcessName -Like "DCS*Updater*" | Wait-Process;
+    Write-Output "Running Updater...";
+    Start-Process $updaterPath -ArgumentList @("update") -Wait;
     Write-Output "Done!`n`nUpdating MissionScripting.lua with GRPC functions...";
 }
 
