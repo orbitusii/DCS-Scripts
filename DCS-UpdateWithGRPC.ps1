@@ -1,6 +1,6 @@
 param(
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Low')]
-    [Parameter(Position = 0)]
+    [Parameter(Position = 0, Mandatory=$true)]
     [string] $InstallPath,
     [switch] $NoUpdate
 )
@@ -10,15 +10,15 @@ Write-Output "This script will update DCS, then update its MissionScripting.lua 
 Write-Output "Please contact Sendit on Github (https://github.com/orbitusii) or Discord (@orbitusii) for questions, comments, or concerns."
 
 # Checks to see if the user passed an InstallPath string. If it's empty, read from the console. If it's STILL empty, then default to C:\Program Files
-if ($InstallPath -eq "") {
-    $inputpath = Read-Host -Prompt "DCS Install directory (defaults to 'C:\Program Files\Eagle Dynamics\DCS World OpenBeta\')";
-    if ($inputpath -eq "") {
-        $InstallPath = "C:\Program Files\Eagle Dynamics\DCS World OpenBeta\";
-    }
-    else {
-        $InstallPath = $inputpath;
-    }
-}
+#if ($InstallPath -eq "") {
+#    $inputpath = Read-Host -Prompt "DCS Install directory (defaults to 'C:\Program Files\Eagle Dynamics\DCS World OpenBeta\')";
+#    if ($inputpath -eq "") {
+#        $InstallPath = "C:\Program Files\Eagle Dynamics\DCS World OpenBeta\";
+#    }
+#    else {
+#        $InstallPath = $inputpath;
+#    }
+#}
 
 # Start the updater! The script will wait for it to complete before proceeding.
 $updaterPath = Join-Path -Path $InstallPath -ChildPath "bin\DCS_updater.exe";
